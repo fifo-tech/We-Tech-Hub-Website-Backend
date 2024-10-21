@@ -1,11 +1,13 @@
 package com.example.fifotech.controller;
 
 import com.example.fifotech.entity.JobPosting;
+import com.example.fifotech.repository.JobPostingRepository;
 import com.example.fifotech.services.JobPostingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -16,6 +18,16 @@ public class JobPostingController {
 
     @Autowired
     private JobPostingService jobPostingService;
+
+    @Autowired
+    private JobPostingRepository jobPostingRepository;
+
+    // Get all active job postings (where application deadline hasn't passed)
+    @GetMapping("/active-jobs")
+    public List<JobPosting> getActiveJobPosts() {
+        LocalDate currentDate = LocalDate.now();
+        return jobPostingRepository.findByApplicationDeadlineAfter(currentDate);
+    }
 
 
     // create
