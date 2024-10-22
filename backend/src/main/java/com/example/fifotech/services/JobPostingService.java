@@ -40,11 +40,30 @@ public class JobPostingService {
     ;
 
 
+    // update job post
+    public JobPosting updateJobPost(Long id, JobPosting updatedJobPosting) {
+        // Find the existing job post
+        JobPosting existingJobPosting = jobPostingRepository.findById(id).orElse(null);
 
-//
-//    public Student update(Student student) {
-//        return repository.save(student);
-//    }
+        if (existingJobPosting != null) {
+            // Update the fields with the new values from the request
+            existingJobPosting.setJobTitle(updatedJobPosting.getJobTitle());
+            existingJobPosting.setJobDescription(updatedJobPosting.getJobDescription());
+            existingJobPosting.setSalary(updatedJobPosting.getSalary());
+            existingJobPosting.setExperienceRequired(updatedJobPosting.getExperienceRequired());
+            existingJobPosting.setEducationQualification(updatedJobPosting.getEducationQualification());
+            existingJobPosting.setApplicationDeadline(updatedJobPosting.getApplicationDeadline());
+            existingJobPosting.setContactInformation(updatedJobPosting.getContactInformation());
+            existingJobPosting.setResponsibilities(updatedJobPosting.getResponsibilities());
+            existingJobPosting.setRequirements(updatedJobPosting.getRequirements());
+            existingJobPosting.setWhatWeOffer(updatedJobPosting.getWhatWeOffer());
+
+            // Save the updated job posting back to the database
+            return jobPostingRepository.save(existingJobPosting);
+        }
+
+        return null;  // Return null if the job post with the given ID was not found
+    }
 
 
 

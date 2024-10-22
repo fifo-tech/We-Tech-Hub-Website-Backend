@@ -38,13 +38,6 @@ public class JobPostingController {
 
     }
 
-//    @PostMapping("/postNewJob")
-//    public ResponseEntity<JobPosting> addNewJobPosting(@RequestBody JobPosting jobPosting) {
-//        JobPosting createdJob = jobPostingService.postNewJob(jobPosting);
-//        return ResponseEntity.ok(createdJob);
-//    }
-
-
 
 
     // show
@@ -72,18 +65,15 @@ public class JobPostingController {
 
 //    edit  >>  Update
 
-    @PutMapping("/updateJobPost")
-    public JobPosting updateJobPost(@RequestBody JobPosting jobPosting){
-        return null;
+    // Update job post
+    @PutMapping("/updateJobPost/{id}")
+    public JobPosting updateJobPost(@PathVariable("id") Long id, @RequestBody JobPosting updatedJobPosting) {
+        return jobPostingService.updateJobPost(id, updatedJobPosting);
     }
 
 
 
-//    @PutMapping("/edit/{id}")
-//    public Student updateStudent(@PathVariable("id") Long id, @RequestBody Student student) {
-//        student.setId(id);
-//        return service.update(student);
-//    }
+
 
 
 }

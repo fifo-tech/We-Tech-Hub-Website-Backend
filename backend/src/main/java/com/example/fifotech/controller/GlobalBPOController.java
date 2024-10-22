@@ -95,11 +95,38 @@ public class GlobalBPOController {
 
 
 
+
+
     @PutMapping("/updateGlobalBPO/{id}")
-    public ResponseEntity<GlobalBPO> updateGlobalBPO(@PathVariable Long id, @RequestBody GlobalBPO updatedGlobalBPO) {
-        GlobalBPO globalBPO = globalBPOService.updateGlobalBPO(id, updatedGlobalBPO);
+    public ResponseEntity<GlobalBPO> updateGlobalBPO(
+            @PathVariable Long id,
+            @RequestParam("title") String title,
+            @RequestParam("subtitle") String subtitle,
+            @RequestParam("postDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate postDate,
+            @RequestParam("details") String details,
+            @RequestParam(value = "captions", required = false) List<String> captions,
+            @RequestParam(value = "images", required = false) List<MultipartFile> images,
+            @RequestParam(value = "thumbnailImage", required = false) MultipartFile thumbnailImage
+    ) throws IOException {
+
+        GlobalBPO updatedGlobalBPO = new GlobalBPO();
+        updatedGlobalBPO.setTitle(title);
+        updatedGlobalBPO.setSubtitle(subtitle);
+        updatedGlobalBPO.setPostDate(postDate);
+        updatedGlobalBPO.setDetails(details);
+
+        GlobalBPO globalBPO = globalBPOService.updateGlobalBPO(id, updatedGlobalBPO, images, thumbnailImage, captions);
+
         return ResponseEntity.ok(globalBPO);
     }
+
+
+
+
+
+
+
+
 
     @DeleteMapping("/deleteGlobalBPO/{id}")
     public ResponseEntity<Void> deleteGlobalBPO(@PathVariable Long id) {

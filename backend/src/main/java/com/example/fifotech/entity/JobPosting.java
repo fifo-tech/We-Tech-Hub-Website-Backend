@@ -21,8 +21,8 @@ public class JobPosting{
     private String jobTitle;
     @Column(length = 5000)
     private String jobDescription;
-    private Double salary;
-    private Integer experienceRequired;
+    private String salary;
+    private String experienceRequired;
     private String educationQualification;
     private LocalDate applicationDeadline;
     private String contactInformation;

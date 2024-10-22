@@ -70,20 +70,52 @@ public class GlobalBPOService {
         return globalBPORepository.findById(id);
     }
 
+
+
+
+
+
+
     @Transactional
-    public GlobalBPO updateGlobalBPO(Long id, GlobalBPO updatedGlobalBPO) {
+    public GlobalBPO updateGlobalBPO(Long id, GlobalBPO updatedGlobalBPO, List<MultipartFile> images, MultipartFile thumbnailImage, List<String> captions) throws IOException {
         return globalBPORepository.findById(id)
                 .map(globalBPO -> {
-                    globalBPO.setThumbnailImage(updatedGlobalBPO.getThumbnailImage());
-                    globalBPO.setTitle(updatedGlobalBPO.getTitle());
-                    globalBPO.setSubtitle(updatedGlobalBPO.getSubtitle());
-                    globalBPO.setPostDate(updatedGlobalBPO.getPostDate());
-                    globalBPO.setDetails(updatedGlobalBPO.getDetails());
-                    globalBPO.setImages(updatedGlobalBPO.getImages()); // Update images if needed
-                    return globalBPORepository.save(globalBPO);
+                    try {
+                        // Update thumbnail image if provided
+                        if (thumbnailImage != null && !thumbnailImage.isEmpty()) {
+                            globalBPO.setThumbnailImage(thumbnailImage.getBytes());
+                        }
+
+                        // Update other fields
+                        globalBPO.setTitle(updatedGlobalBPO.getTitle());
+                        globalBPO.setSubtitle(updatedGlobalBPO.getSubtitle());
+                        globalBPO.setPostDate(updatedGlobalBPO.getPostDate());
+                        globalBPO.setDetails(updatedGlobalBPO.getDetails());
+
+                        // Update images if provided
+                        if (images != null && !images.isEmpty()) {
+                            List<imageGB> postImages = new ArrayList<>();
+                            for (int i = 0; i < images.size(); i++) {
+                                MultipartFile imageFile = images.get(i);
+                                imageGB postImage = new imageGB();
+                                postImage.setImg(imageFile.getBytes());
+                                postImage.setCaption(captions.get(i)); // Add the corresponding caption
+                                postImages.add(postImage);
+                            }
+                            globalBPO.setImages(postImages);
+                        }
+
+                        return globalBPORepository.save(globalBPO);
+
+                    } catch (IOException e) {
+                        throw new RuntimeException("Error processing images", e);
+                    }
                 })
                 .orElseThrow(() -> new RuntimeException("GlobalBPO not found with id " + id));
     }
+
+
+
 
     @Transactional
     public void deleteGlobalBPO(Long id) {
