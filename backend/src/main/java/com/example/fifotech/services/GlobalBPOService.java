@@ -24,40 +24,8 @@ public class GlobalBPOService {
     @Autowired
     private ImageGBRepository imageGBRepository;
 
-//    @Transactional
-//    public GlobalBPO createGlobalBPO(GlobalBPO globalBPO, List<MultipartFile> files, List<String> captions) throws IOException {
-//        // Ensure that the list of images is initialized
-//        if (globalBPO.getImages() == null) {
-//            globalBPO.setImages(new ArrayList<>());
-//        }
-//
-//        for (int i = 0; i < files.size(); i++) {
-//            MultipartFile file = files.get(i);
-//            imageGB image = new imageGB();
-//
-//            // Convert file to byte[]
-//            image.setImg(file.getBytes());
-//
-//            // Set the corresponding caption
-//            if (i < captions.size()) {
-//                image.setCaption(captions.get(i));
-//            } else {
-//                image.setCaption(""); // Optionally set an empty string or null if no caption is provided
-//            }
-//
-//            // Set the GlobalBPO reference
-//            image.setGlobalBPO(globalBPO);
-//
-//            // Add the image to the GlobalBPO's list of images
-//            globalBPO.getImages().add(image);
-//        }
-//
-//        // Save the GlobalBPO entity along with its images
-//        return globalBPORepository.save(globalBPO);
-//    }
-//
 
-    public GlobalBPO createGlobalBPO(GlobalBPO globalBPO){
+    public GlobalBPO createGlobalBPO(GlobalBPO globalBPO) {
         return globalBPORepository.save(globalBPO);
     }
 
@@ -69,11 +37,6 @@ public class GlobalBPOService {
     public Optional<GlobalBPO> getGlobalBPOById(Long id) {
         return globalBPORepository.findById(id);
     }
-
-
-
-
-
 
 
     @Transactional
@@ -115,8 +78,6 @@ public class GlobalBPOService {
     }
 
 
-
-
     @Transactional
     public void deleteGlobalBPO(Long id) {
         globalBPORepository.deleteById(id);
@@ -127,32 +88,5 @@ public class GlobalBPOService {
     }
 
 
-
 }
 
-
-//
-////    create
-//public GlobalBPO createNewGlobalBPO(GlobalBPO globalBPO) {
-//    return globalBpoRepository.save(globalBPO);
-//}
-//
-//// show from db to website
-//public List<GlobalBPO> getAllGlobalBPO() {
-//    return (List<GlobalBPO>) globalBpoRepository.findAll();
-//
-//}
-//
-//
-//// delete by id
-//public void deleteGlobalBPO(Long id) {
-//    globalBpoRepository.deleteById(id);
-//}
-//
-//
-//// edit
-//public GlobalBPO getGlobalBPOById(Long id) {
-//    return globalBpoRepository.findById(id).get();
-//}
-//
-//;

@@ -83,14 +83,14 @@ public class GlobalBPOController {
 
 
 
-
-
     @GetMapping("/getGlobalBPOById/{id}")
     public ResponseEntity<GlobalBPO> getGlobalBPOById(@PathVariable Long id) {
         return globalBPOService.getGlobalBPOById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+
 
 
 
@@ -141,34 +141,3 @@ public class GlobalBPOController {
 
 }
 
-
-//
-//// create
-//@PostMapping({"/postNewGlobalBPO"})
-//public GlobalBPO addNewGlobalBPO(@RequestBody GlobalBPO globalBPO) {
-//    return globalBPOService.createNewGlobalBPO(globalBPO);
-//
-//}
-//
-//// show
-//@GetMapping({"/getAllGlobalBPO"})
-//public List<GlobalBPO> getAllGlobalBPO() {
-//    return globalBPOService.getAllGlobalBPO();
-//}
-//
-//;
-//
-//// delete
-//@DeleteMapping({"/deleteGlobalBPO/{id}"})
-//public void deleteGlobalBPO(@PathVariable("id") Integer id) {
-//    globalBPOService.deleteGlobalBPO(id);
-//}
-//
-////edit
-//@GetMapping({"/getGlobalBPOById/{id}"})
-//public GlobalBPO getGlobalBPOById(@PathVariable("id") Integer id) {
-//    return globalBPOService.getGlobalBPOById(id);
-//}
-//
-//;
-//

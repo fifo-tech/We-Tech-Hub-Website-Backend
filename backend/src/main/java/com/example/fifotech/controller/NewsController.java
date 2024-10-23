@@ -64,6 +64,19 @@ public class NewsController {
     }
 
 
+    // Update News
+    @PutMapping("/news/{id}")
+    public ResponseEntity<NewsDto> updateNews(
+            @PathVariable Long id,
+            @ModelAttribute NewsDto newsDto) throws IOException {
+
+        try {
+            NewsDto updatedNews = newsService.updateNews(id, newsDto);
+            return ResponseEntity.ok(updatedNews);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 
 
 }

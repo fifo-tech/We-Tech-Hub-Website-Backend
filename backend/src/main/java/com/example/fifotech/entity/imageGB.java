@@ -27,8 +27,6 @@ public class imageGB {
     @Column(length = 2000)
     private String caption;
 
-//    @ElementCollection
-//    private List<String> imgCap;
 
     @ManyToOne
     @JoinColumn(name = "global_id")

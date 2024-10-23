@@ -17,7 +17,7 @@ public interface NewsService {
 
     NewsDto getNewsById(Long id);
 
-//    NewsDto updateNews(Long id, NewsDto newsDto) throws IOException;
+    NewsDto updateNews(Long id, NewsDto newsDto) throws IOException;
 
 
 

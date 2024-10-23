@@ -1,15 +1,14 @@
 package com.example.fifotech.controller;
 
-import com.example.fifotech.entity.*;
+import com.example.fifotech.entity.Gallery;
+import com.example.fifotech.entity.GalleryImage;
 import com.example.fifotech.services.GalleryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,6 +25,8 @@ public class GalleryController {
     private GalleryService galleryService;
 
 
+
+
     @PostMapping("/createGallery")
     public ResponseEntity<Gallery> createGallery(
             @RequestParam("title") String title,
@@ -38,31 +39,31 @@ public class GalleryController {
 
     ) throws IOException {
 
-        Gallery gallery = new Gallery();
-        gallery.setTitle(title);
-        gallery.setSubtitle(subtitle);
-        gallery.setPostDate(postDate);
-        gallery.setDetails(details);
+        Gallery bpo = new Gallery();
+        bpo.setTitle(title);
+        bpo.setSubtitle(subtitle);
+        bpo.setPostDate(postDate);
+        bpo.setDetails(details);
 
         // Set thumbnail image
         if (thumbnailImage != null && !thumbnailImage.isEmpty()) {
-            gallery.setThumbnailImage(thumbnailImage.getBytes());
+            bpo.setThumbnailImage(thumbnailImage.getBytes());
         }
 
 
-        List<ImageGallery> postImages = new ArrayList<>();
+        List<GalleryImage> postImages = new ArrayList<>();
         for (int i = 0; i < images.size(); i++) {
 
             MultipartFile imageFile = images.get(i);
-            ImageGallery postImage = new ImageGallery();
+
+            GalleryImage postImage = new GalleryImage();
             postImage.setImg(imageFile.getBytes());
             postImage.setCaption(captions.get(i)); // Add the corresponding caption
             postImages.add(postImage);
         }
 
-        gallery.setImages(postImages);  // Attach images with captions to the post
-
-        Gallery savedPost = galleryService.saveGallery(gallery);
+        bpo.setImages(postImages);  // Attach images with captions to the post
+        Gallery savedPost = galleryService.createGallery(bpo);
         System.out.println("Received Captions: " + captions);
 
         return ResponseEntity.ok(savedPost);
@@ -72,61 +73,12 @@ public class GalleryController {
 
 
 
-
-
-
-//
-//    // show
-//    @GetMapping({"/getAllGallery"})
-//    public List<Gallery> getAllGallery() {
-//        return galleryService.getAllGallery();
-//    }
-//
-//    ;
-//
-//    // delete
-//    @DeleteMapping({"/deleteGallery/{id}"})
-//    public void deleteGallery(@PathVariable("id") Long id) {
-//        galleryService.deleteGallery(id);
-//    }
-//
-//    //Get Element by id to show
-//    @GetMapping({"/getGalleryById/{id}"})
-//    public Gallery getGalleryById(@PathVariable("id") Long id) {
-//        return galleryService.getGalleryById(id);
-//    } ;
-//
-//
-
-
-
-
-
-
     @GetMapping("/getAllGallery")
     public ResponseEntity<List<Gallery>> getAllGallery() {
-        List<Gallery> galleries = galleryService.getAllGallery();
-        return ResponseEntity.ok(galleries);
-    }
-
-
-
-
-
-
-    @DeleteMapping("/deleteGallery/{id}")
-    public ResponseEntity<Void> deleteGallery(@PathVariable Long id) {
-        galleryService.deleteGallery(id);
-        return ResponseEntity.noContent().build();
-    }
-
-
-
-    @PutMapping("/updateGallery/{id}")
-    public ResponseEntity<Gallery> updateGallery(@PathVariable Long id, @RequestBody Gallery updatedGallery) {
-        Gallery gallery = galleryService.updateGallery(id, updatedGallery);
+        List<Gallery> gallery = galleryService.getAllGallery();
         return ResponseEntity.ok(gallery);
     }
+
 
 
 
@@ -143,11 +95,49 @@ public class GalleryController {
 
 
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleException(Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+
+
+    @PutMapping("/updateGallery/{id}")
+    public ResponseEntity<Gallery> updateGallery(
+            @PathVariable Long id,
+            @RequestParam("title") String title,
+            @RequestParam("subtitle") String subtitle,
+            @RequestParam("postDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate postDate,
+            @RequestParam("details") String details,
+            @RequestParam(value = "captions", required = false) List<String> captions,
+            @RequestParam(value = "images", required = false) List<MultipartFile> images,
+            @RequestParam(value = "thumbnailImage", required = false) MultipartFile thumbnailImage
+    ) throws IOException {
+
+        Gallery updatedGallery = new Gallery();
+        updatedGallery.setTitle(title);
+        updatedGallery.setSubtitle(subtitle);
+        updatedGallery.setPostDate(postDate);
+        updatedGallery.setDetails(details);
+
+        Gallery gallery = galleryService.updateGallery(id, updatedGallery, images, thumbnailImage, captions);
+
+        return ResponseEntity.ok(gallery);
     }
 
 
 
+
+
+
+
+
+
+    @DeleteMapping("/deleteGallery/{id}")
+    public ResponseEntity<Void> deleteGallery(@PathVariable Long id) {
+        galleryService.deleteGallery(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
+
+
+
 }
+

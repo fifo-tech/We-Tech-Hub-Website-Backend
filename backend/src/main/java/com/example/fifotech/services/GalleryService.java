@@ -1,65 +1,96 @@
 package com.example.fifotech.services;
 
 import com.example.fifotech.entity.Gallery;
+import com.example.fifotech.entity.GalleryImage;
+import com.example.fifotech.repository.GalleryImgRepository;
 import com.example.fifotech.repository.GalleryRepository;
-import com.example.fifotech.repository.ImageGalleryRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class GalleryService {
 
+
     @Autowired
     private GalleryRepository galleryRepository;
 
     @Autowired
-    private ImageGalleryRepository imageGalleryRepository;
+    private GalleryImgRepository galleryImgRepository;
 
 
-    public Gallery saveGallery(Gallery gallery) {
+    public Gallery createGallery(Gallery gallery) {
         return galleryRepository.save(gallery);
     }
 
-    // show from db to website
+
     public List<Gallery> getAllGallery() {
         return galleryRepository.findAll();
     }
-
 
     public Optional<Gallery> getGalleryById(Long id) {
         return galleryRepository.findById(id);
     }
 
+
     @Transactional
-    public Gallery updateGallery(Long id, Gallery updatedGallery) {
+    public Gallery updateGallery(Long id, Gallery updatedGallery, List<MultipartFile> images, MultipartFile thumbnailImage, List<String> captions) throws IOException {
         return galleryRepository.findById(id)
                 .map(gallery -> {
-                    gallery.setThumbnailImage(updatedGallery.getThumbnailImage());
-                    gallery.setTitle(updatedGallery.getTitle());
-                    gallery.setSubtitle(updatedGallery.getSubtitle());
-                    gallery.setPostDate(updatedGallery.getPostDate());
-                    gallery.setDetails(updatedGallery.getDetails());
-                    gallery.setImages(updatedGallery.getImages()); // Update images if needed
-                    return galleryRepository.save(gallery);
+                    try {
+                        // Update thumbnail image if provided
+                        if (thumbnailImage != null && !thumbnailImage.isEmpty()) {
+                            gallery.setThumbnailImage(thumbnailImage.getBytes());
+                        }
+
+                        // Update other fields
+                        gallery.setTitle(updatedGallery.getTitle());
+                        gallery.setSubtitle(updatedGallery.getSubtitle());
+                        gallery.setPostDate(updatedGallery.getPostDate());
+                        gallery.setDetails(updatedGallery.getDetails());
+
+                        // Update images if provided
+                        if (images != null && !images.isEmpty()) {
+                            List<GalleryImage> postImages = new ArrayList<>();
+                            for (int i = 0; i < images.size(); i++) {
+                                MultipartFile imageFile = images.get(i);
+
+                                GalleryImage postImage = new GalleryImage();
+                                postImage.setImg(imageFile.getBytes());
+                                postImage.setCaption(captions.get(i)); // Add the corresponding caption
+                                postImages.add(postImage);
+                            }
+                            gallery.setImages(postImages);
+                        }
+
+                        return galleryRepository.save(gallery);
+
+                    } catch (IOException e) {
+                        throw new RuntimeException("Error processing images", e);
+                    }
                 })
-                .orElseThrow(() -> new RuntimeException("gallery not found with id " + id));
+                .orElseThrow(() -> new RuntimeException("Gallery not found with id " + id));
     }
 
 
-    // delete by id
     @Transactional
     public void deleteGallery(Long id) {
         galleryRepository.deleteById(id);
 
-        imageGalleryRepository.deleteByGalleryId(id);
+        galleryImgRepository.deleteByGalleryId(id);
+
+
     }
 
 
-
-
 }
+
+
+
+

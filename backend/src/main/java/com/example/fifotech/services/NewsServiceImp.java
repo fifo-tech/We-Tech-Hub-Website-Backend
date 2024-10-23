@@ -44,7 +44,6 @@ public class NewsServiceImp implements NewsService {
         news.setLastUpdated(LocalDateTime.now());
 
 
-
         System.out.println(Arrays.toString(news.getImg()));
         System.out.println(Arrays.toString(ImageUtils.compressImage(news.getImg())));
 
@@ -72,17 +71,13 @@ public class NewsServiceImp implements NewsService {
     }
 
 
-
-    // get news by id
-
-//    public ResponseEntity<NewsDto> getNewsById(@PathVariable Long id) {
-//        NewsDto newsDto = newsRepository.findById(id).get();
-//        return ResponseEntity.ok(newsDto);
-//    }
-
-
+//    @Override
 //    public NewsDto getNewsById(Long id) {
-//        return newsRepository.findById(id).get();
+//        Optional<News> optionalNews = newsRepository.findById(id);
+//        if (optionalNews.isPresent()) {
+//            return optionalNews.get().getDto(); // Convert to NewsDto and return
+//        }
+//        return null; // Return null if not found
 //    }
 
 
@@ -90,9 +85,39 @@ public class NewsServiceImp implements NewsService {
     public NewsDto getNewsById(Long id) {
         Optional<News> optionalNews = newsRepository.findById(id);
         if (optionalNews.isPresent()) {
-            return optionalNews.get().getDto(); // Convert to NewsDto and return
+            News news = optionalNews.get();
+            System.out.println("Fetched news: " + news); // Log the news object
+            return news.getDto(); // Convert to NewsDto and return
         }
         return null; // Return null if not found
     }
+
+
+    // Update
+    public NewsDto updateNews(Long id, NewsDto newsDto) throws IOException {
+        Optional<News> optionalNews = newsRepository.findById(id);
+
+        if (optionalNews.isPresent()) {
+            News news = optionalNews.get();
+
+            // Update only the provided fields
+            news.setTitle(newsDto.getTitle());
+            news.setSubtitle(newsDto.getSubtitle());
+            news.setDescription(newsDto.getDescription());
+
+            // Only update the image if a new one is provided
+            if (newsDto.getImg() != null && !newsDto.getImg().isEmpty()) {
+                news.setImg(newsDto.getImg().getBytes());
+            }
+
+            // Update the lastUpdated time
+            news.setLastUpdated(LocalDateTime.now());
+
+            return newsRepository.save(news).getDto();
+        } else {
+            throw new IllegalArgumentException("News with ID " + id + " not found.");
+        }
+    }
+
 
 }

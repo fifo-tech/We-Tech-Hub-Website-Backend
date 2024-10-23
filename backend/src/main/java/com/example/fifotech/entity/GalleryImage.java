@@ -9,8 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name = "image_gallery")
-public class ImageGallery {
+@Table(name = "gallery_img")
+public class GalleryImage {
 
 
     @Id
@@ -24,11 +24,11 @@ public class ImageGallery {
     @Column(length = 2000)
     private String caption;
 
-//    @ElementCollection
-//    private List<String> imgCap;
+
 
     @ManyToOne
     @JoinColumn(name = "gallery_id")
     private Gallery gallery;
+
 
 }
