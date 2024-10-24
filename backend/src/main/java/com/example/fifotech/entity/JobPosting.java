@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -24,6 +25,8 @@ public class JobPosting{
     private String salary;
     private String experienceRequired;
     private String educationQualification;
+
+    @Temporal(TemporalType.DATE)
     private LocalDate applicationDeadline;
     private String contactInformation;
 
@@ -40,5 +43,7 @@ public class JobPosting{
     @Column(length = 5000)
     private List<String> whatWeOffer;
 
+//testng
+    private LocalTime postTime;
 
 }

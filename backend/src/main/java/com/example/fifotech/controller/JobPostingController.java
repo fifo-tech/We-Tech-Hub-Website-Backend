@@ -1,32 +1,47 @@
 package com.example.fifotech.controller;
 
+import com.example.fifotech.entity.CompletedJob;
 import com.example.fifotech.entity.JobPosting;
 import com.example.fifotech.repository.JobPostingRepository;
+import com.example.fifotech.services.CompletedJobService;
 import com.example.fifotech.services.JobPostingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @CrossOrigin(origins = {"https://wetechhub.com", "http://localhost:4200"},  allowCredentials = "true")
 public class JobPostingController {
 
-    @Autowired
-    private JobPostingService jobPostingService;
+//    @Autowired
+//    private JobPostingService jobPostingService;
 
     @Autowired
-    private JobPostingRepository jobPostingRepository;
+    private CompletedJobService completedJobRepository;
+//
+//    @Autowired
+//    private JobPostingRepository jobPostingRepository;
+//
+//
+//    private final JobPostingService jobPostingService;
+//    private final CompletedJobService completedJobService;
+//
+//
 
-    // Get all active job postings (where application deadline hasn't passed)
-    @GetMapping("/active-jobs")
-    public List<JobPosting> getActiveJobPosts() {
-        LocalDate currentDate = LocalDate.now();
-        return jobPostingRepository.findByApplicationDeadlineAfter(currentDate);
+
+
+    private final JobPostingService jobPostingService;
+
+    @Autowired
+    public JobPostingController(JobPostingService jobPostingService) {
+        this.jobPostingService = jobPostingService;
     }
 
 
@@ -70,6 +85,37 @@ public class JobPostingController {
     public JobPosting updateJobPost(@PathVariable("id") Long id, @RequestBody JobPosting updatedJobPosting) {
         return jobPostingService.updateJobPost(id, updatedJobPosting);
     }
+
+
+
+//    // Get all completed tasks
+//    @GetMapping("/getAllCompletedTasks")
+//    public List<CompletedJob> getAllCompletedTasks() {
+//        return jobPostingService.getAllCompletedTasks();
+//    }
+
+    // Get all completed tasks
+    @GetMapping("/getAllCompletedTasks")
+    public List<CompletedJob> getAllCompletedTasks() {
+        return completedJobRepository.getAllCompletedTasks();
+    }
+
+//    @GetMapping("/job-postings")
+//    public List<JobPosting> getActiveJobPosts() {
+//        LocalTime today = LocalTime.now();
+//        return jobPostingRepository.findByPostTimeBefore(today);
+//    }
+
+
+    @GetMapping("/job-postings")
+    public ResponseEntity<String> getActiveJobPosts() {
+        jobPostingService.moveExpiredJobPostings();
+        return ResponseEntity.ok("Scheduler test executed");
+    }
+
+
+
+
 
 
 

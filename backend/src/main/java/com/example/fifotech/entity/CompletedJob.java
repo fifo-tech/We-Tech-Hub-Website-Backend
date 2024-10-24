@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -26,10 +27,11 @@ public class CompletedJob {
     private String salary;
     private String experienceRequired;
     private String educationQualification;
-    private LocalDate applicationDeadline;
-    private String contactInformation;
 
-    private Date archivedDate; // When the job was archived
+    @Temporal(TemporalType.DATE)
+    private LocalDate applicationDeadline;
+
+    private String contactInformation;
 
 
     @ElementCollection
@@ -44,4 +46,5 @@ public class CompletedJob {
     @Column(length = 5000)
     private List<String> whatWeOffer;
 
+    private LocalTime postTime;
 }
